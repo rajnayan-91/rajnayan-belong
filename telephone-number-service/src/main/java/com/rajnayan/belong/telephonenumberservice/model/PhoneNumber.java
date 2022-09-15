@@ -1,7 +1,5 @@
 package com.rajnayan.belong.telephonenumberservice.model;
 
-import javax.annotation.PostConstruct;
-
 public class PhoneNumber {
     private Long phone;
 

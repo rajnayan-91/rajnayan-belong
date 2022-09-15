@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class NumberServiceImpl {
@@ -20,7 +21,7 @@ public class NumberServiceImpl {
         PhoneNumber phoneNumber2 = new PhoneNumber(86868686,"Active");
         PhoneNumber phoneNumber3 = new PhoneNumber(76767676,"Active");
         PhoneNumber phoneNumber4 = new PhoneNumber(56565656,"Active");
-        PhoneNumber phoneNumber5 = new PhoneNumber(65656565,"Not Active");
+        PhoneNumber phoneNumber5 = new PhoneNumber(65656565,"InActive");
 
         numbers= Arrays.asList(phoneNumber1,phoneNumber2, phoneNumber3,phoneNumber4,phoneNumber5);
 
@@ -40,10 +41,29 @@ public class NumberServiceImpl {
     public List<Long> getPhoneNumbersByName(String name) {
         List<Long> customerNumbers = new ArrayList<>();
         List<Customer> cust = customers.stream().filter(customer -> customer.getName().equalsIgnoreCase(name)).collect(Collectors.toList());
-        for (Customer customer : cust) {
-            List<Long> numbers = customer.getPhoneNumbers().stream().map(num -> num.getPhone()).collect(Collectors.toList());
-            customerNumbers.addAll(numbers);
-        }
+        if (!cust.isEmpty()){
+            for (Customer customer : cust) {
+                List<Long> numbers = customer.getPhoneNumbers().stream().map(num -> num.getPhone()).collect(Collectors.toList());
+                customerNumbers.addAll(numbers);
+            }
+    }
         return customerNumbers;
+    }
+
+    public boolean updatePhoneNumberStatus(Long num) {
+
+        numbers.stream().filter(n-> num.equals(n.getPhone())).findFirst().ifPresent(s->s.setStatus("Active"));
+
+        return true;
+    }
+
+    public String getPhoneNumberStatus(Long num) {
+        String status=null;
+        Optional<PhoneNumber> contactNum= numbers.stream().filter(n-> num.equals(n.getPhone())).findFirst();
+        if(contactNum.isPresent())
+        {
+            status= contactNum.get().getStatus();
+        }
+        return status;
     }
 }
